@@ -3,6 +3,8 @@ import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
+
 import javax.imageio.ImageIO;
 
 public class HistogramEqualization {
@@ -16,21 +18,21 @@ public class HistogramEqualization {
             return;
         }
 
-        // Single-threaded implementation
+        // single-threaded implementation
         long startTime = System.currentTimeMillis();
         BufferedImage resultSingle = equalizeHistogramSingleThread(image);
         long endTime = System.currentTimeMillis();
         System.out.println("Single-threaded execution time: " + (endTime - startTime) + " ms");
 
-        // Multi-threaded implementation
-        int numOfThreads = 4; // Number of threads to use
+        // multi-threaded implementation
+        int numOfThreads = 4; // Number of threads to use change it so that you can try with multiple threads
         startTime = System.currentTimeMillis();
         BufferedImage resultMulti = equalizeHistogramMultiThread(image, numOfThreads);
         endTime = System.currentTimeMillis();
         System.out.println("Multi-threaded execution time (numOfThreads = " + numOfThreads + "): "
                 + (endTime - startTime) + " ms");
 
-        // Save the results
+        // save the results
         saveImage(resultSingle, "Rain_Tree_single.jpg");
         saveImage(resultMulti, "Rain_Tree_multi.jpg");
     }
@@ -64,7 +66,7 @@ public class HistogramEqualization {
         int[] histogram = new int[NUM_BINS];
         int[] cumHistogram = new int[NUM_BINS];
 
-        // Compute histogram
+        // compute histogram
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
                 int rgb = image.getRGB(x, y);
@@ -74,7 +76,7 @@ public class HistogramEqualization {
             }
         }
 
-        // Compute cumulative histogram
+        // compute cumulative histogram
         int totalPixels = width * height;
         int sum = 0;
         for (int i = 0; i < NUM_BINS; i++) {
@@ -82,7 +84,7 @@ public class HistogramEqualization {
             cumHistogram[i] = sum * (NUM_BINS - 1) / totalPixels;
         }
 
-        // Equalize image
+        // equalize image
         BufferedImage result = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
@@ -143,7 +145,7 @@ public class HistogramEqualization {
             startY += step;
         }
 
-        // Wait for all threads to finish
+        // waiting for all threads to finish
         for (HistogramEqualizationThread thread : eqThreads) {
             try {
                 thread.join();
